@@ -1,0 +1,32 @@
+#!/bin/bash
+# Must use bash for the edk2
+
+# Copyright (C) 2016 Curt Brune <curt@cumulusnetworks.com>
+#
+# SPDX-License-Identifier:     GPL-2.0
+#
+# Wrapper script for involing edk2 commands with the edk2 build
+# environment configured.
+#
+
+set -e
+
+[ -d "$EDK2DIR" ] || {
+    echo "ERROR: EDK2DIR directory does not exist: $EDK2DIR"
+    exit 1
+}
+
+cd ${EDK2DIR}
+[ -r "./edksetup.sh" ] || {
+    echo "ERROR: edksetup.sh script not exist in $EDK2DIR"
+    exit 1
+}
+
+# edksetup.sh cannot tolerate any command line options.  Save what we
+# have and execute later.  This will break if options contain spaces.
+command="$@"
+shift $#
+. ./edksetup.sh
+
+# Use command line args for running a command
+$command

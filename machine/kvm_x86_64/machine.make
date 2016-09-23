@@ -56,6 +56,9 @@ FIRMWARE_UPDATE_ENABLE = yes
 # Do not modify Ethernet management MACs programmed by hypervisor.
 SKIP_ETHMGMT_MACS = yes
 
+# Enable building ONIE UEFI
+ONIE_UEFI_ENABLE = yes
+
 #
 # Console parameters can be defined here (default values are in
 # build-config/arch/x86_64.make).

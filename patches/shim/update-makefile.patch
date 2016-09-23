@@ -1,0 +1,83 @@
+Update Makefile
+
+Modify the Makefile slightly to mesh with the ONIE build environment.
+
+diff --git a/Cryptlib/Makefile b/Cryptlib/Makefile
+index 1769e67..186692d 100644
+--- a/Cryptlib/Makefile
++++ b/Cryptlib/Makefile
+@@ -1,7 +1,11 @@
+ 
+ EFI_INCLUDES	= -IInclude -I$(EFI_INCLUDE) -I$(EFI_INCLUDE)/$(ARCH) -I$(EFI_INCLUDE)/protocol
+ 
+-CFLAGS		= -ggdb -O0 -I. -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar \
++# Seed compiler and linker flags ONIE build environment flags
++CFLAGS = $(ONIE_CFLAGS)
++LDFLAGS = $(ONIE_LDFLAGS)
++
++CFLAGS		+= -ggdb -O0 -I. -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar \
+ 		  -Wall $(EFI_INCLUDES) \
+ 		  -ffreestanding -I$(shell $(CC) -print-file-name=include)
+ 
+@@ -12,7 +16,7 @@ endif
+ ifeq ($(ARCH),ia32)
+ 	CFLAGS	+= -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m32
+ endif
+-LDFLAGS		= -nostdlib -znocombreloc
++LDFLAGS		+= -nostdlib -znocombreloc
+ 
+ TARGET		= libcryptlib.a
+ OBJS		=   Hash/CryptMd4.o \
+diff --git a/Cryptlib/OpenSSL/Makefile b/Cryptlib/OpenSSL/Makefile
+index 7bedb94..45ffbd7 100644
+--- a/Cryptlib/OpenSSL/Makefile
++++ b/Cryptlib/OpenSSL/Makefile
+@@ -1,7 +1,11 @@
+ 
+ EFI_INCLUDES	= -I../Include -I$(EFI_INCLUDE) -I$(EFI_INCLUDE)/$(ARCH) -I$(EFI_INCLUDE)/protocol
+ 
+-CFLAGS		= -ggdb -O0 -I. -I.. -I../Include/ -Icrypto -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar -nostdinc \
++# Seed compiler and linker flags ONIE build environment flags
++CFLAGS = $(ONIE_CFLAGS)
++LDFLAGS = $(ONIE_LDFLAGS)
++
++CFLAGS		+= -ggdb -O0 -I. -I.. -I../Include/ -Icrypto -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar -nostdinc \
+ 		  -ffreestanding -I$(shell $(CC) -print-file-name=include) \
+ 		  -Wall $(EFI_INCLUDES) -DOPENSSL_SYSNAME_UWIN -DOPENSSL_SYS_UEFI -DL_ENDIAN -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_SEED -DOPENSSL_NO_RC5 -DOPENSSL_NO_MDC2 -DOPENSSL_NO_SOCK -DOPENSSL_NO_CMS -DOPENSSL_NO_JPAKE -DOPENSSL_NO_CAPIENG -DOPENSSL_NO_ERR -DOPENSSL_NO_KRB5 -DOPENSSL_NO_DYNAMIC_ENGINE -DGETPID_IS_MEANINGLESS -DOPENSSL_NO_STDIO -DOPENSSL_NO_FP_API -DOPENSSL_NO_DGRAM -DOPENSSL_NO_SHA0 -DOPENSSL_NO_LHASH -DOPENSSL_NO_HW -DOPENSSL_NO_OCSP -DOPENSSL_NO_LOCKING -DOPENSSL_NO_DEPRECATED -DOPENSSL_SMALL_FOOTPRINT -DPEDANTIC
+ 
+@@ -19,7 +23,7 @@ endif
+ ifeq ($(ARCH),arm)
+ 	CFLAGS	+= -O2 -DTHIRTY_TWO_BIT
+ endif
+-LDFLAGS		= -nostdlib -znocombreloc
++LDFLAGS		+= -nostdlib -znocombreloc
+ 
+ TARGET		= libopenssl.a
+ OBJS		=   crypto/cryptlib.o \
+diff --git a/Makefile b/Makefile
+index 46d0234..3c68597 100644
+--- a/Makefile
++++ b/Makefile
+@@ -26,7 +26,12 @@ EFI_CRT_OBJS 	= $(EFI_PATH)/crt0-efi-$(ARCH).o
+ EFI_LDS		= elf_$(ARCH)_efi.lds
+ 
+ DEFAULT_LOADER	:= \\\\grub.efi
+-CFLAGS		= -ggdb -O0 -fno-stack-protector -fno-strict-aliasing -fpic \
++
++# Seed compiler and linker flags ONIE build environment flags
++CFLAGS = $(ONIE_CFLAGS)
++LDFLAGS = $(ONIE_LDFLAGS)
++
++CFLAGS		+= -ggdb -O0 -fno-stack-protector -fno-strict-aliasing -fpic \
+ 		  -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin \
+ 		  -Werror=sign-compare -ffreestanding \
+ 		  -I$(shell $(CC) -print-file-name=include) \
+@@ -63,7 +68,7 @@ ifneq ($(origin VENDOR_DBX_FILE), undefined)
+ 	CFLAGS += -DVENDOR_DBX_FILE=\"$(VENDOR_DBX_FILE)\"
+ endif
+ 
+-LDFLAGS		= --hash-style=sysv -nostdlib -znocombreloc -T $(EFI_LDS) -shared -Bsymbolic -L$(EFI_PATH) -L$(LIB_PATH) -LCryptlib -LCryptlib/OpenSSL $(EFI_CRT_OBJS) --build-id=sha1
++LDFLAGS		+= --hash-style=sysv -nostdlib -znocombreloc -T $(EFI_LDS) -shared -Bsymbolic -L$(EFI_PATH) -L$(LIB_PATH) -LCryptlib -LCryptlib/OpenSSL $(EFI_CRT_OBJS) --build-id=sha1
+ 
+ TARGET	= shim.efi MokManager.efi.signed fallback.efi.signed
+ OBJS	= shim.o netboot.o cert.o replacements.o version.o

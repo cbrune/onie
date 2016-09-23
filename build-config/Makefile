@@ -366,6 +366,15 @@ ifeq ($(FIRMWARE_UPDATE_ENABLE),yes)
   include make/firmware-update.make
 endif
 
+# By default do not enabling building ONIE EFI
+ONIE_UEFI_ENABLE ?= no
+ifeq ($(ONIE_UEFI_ENABLE),yes)
+  include make/edk2.make
+  include make/gnu-efi.make
+  include make/pesign.make
+  include make/shim.make
+endif
+
 #-------------------------------------------------------------------------------
 #
 # top level targets
