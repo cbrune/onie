@@ -373,6 +373,7 @@ ifeq ($(ONIE_UEFI_ENABLE),yes)
   include make/gnu-efi.make
   include make/pesign.make
   include make/shim.make
+  include make/onie-uefi.make
 endif
 
 #-------------------------------------------------------------------------------
