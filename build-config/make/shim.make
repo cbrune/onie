@@ -9,9 +9,9 @@
 # This is a makefile fragment that defines the build of shim
 #
 
-SHIM_VERSION			= 0.9
-SHIM_TARBALL			= shim-$(SHIM_VERSION).tar.bz2
-SHIM_TARBALL_URLS		+= $(ONIE_MIRROR) https://github.com/rhinstaller/shim/releases/download/$(SHIM_VERSION)
+SHIM_VERSION			= 0.9+6c180c6
+SHIM_TARBALL			= shim-$(SHIM_VERSION).tar.gz
+SHIM_TARBALL_URLS		+= $(ONIE_MIRROR)
 SHIM_BUILD_DIR			= $(MBUILDDIR)/shim
 SHIM_DIR			= $(SHIM_BUILD_DIR)/shim-$(SHIM_VERSION)
 
@@ -66,7 +66,7 @@ $(SHIM_BUILD_STAMP): $(SHIM_PATCH_STAMP) $(SHIM_NEW_FILES) $(GNU_EFI_INSTALL_STA
 	$(Q) PATH='$(CROSSBIN):$(PESIGN_BIN_DIR):$(PATH)'	\
 		$(MAKE) -C $(SHIM_DIR) \
 			CROSS_COMPILE=$(CROSSPREFIX) \
-			RELEASE=onie \
+			RELEASE=onie-$(SHIM_VERSION) \
 			LIB_PATH="$(DEV_SYSROOT)/usr/lib" \
 			EFI_PATH="$(GNU_EFI_LIB_PATH)" \
 			EFI_INCLUDE="$(GNU_EFI_INCLUDE)"

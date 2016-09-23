@@ -1,9 +1,16 @@
-Update Makefile
+Update Makefiles
 
-Modify the Makefile slightly to mesh with the ONIE build environment.
+From: Curt Brune <curt@cumulusnetworks.com>
+
+Modify the Makefiles slightly to mesh with the ONIE build environment.
+---
+ Cryptlib/Makefile         |    8 ++++++--
+ Cryptlib/OpenSSL/Makefile |    8 ++++++--
+ Makefile                  |    9 +++++++--
+ 3 files changed, 19 insertions(+), 6 deletions(-)
 
 diff --git a/Cryptlib/Makefile b/Cryptlib/Makefile
-index 1769e67..186692d 100644
+index a028979..8b65d6c 100644
 --- a/Cryptlib/Makefile
 +++ b/Cryptlib/Makefile
 @@ -1,7 +1,11 @@
@@ -12,16 +19,16 @@ index 1769e67..186692d 100644
  
 -CFLAGS		= -ggdb -O0 -I. -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar \
 +# Seed compiler and linker flags ONIE build environment flags
-+CFLAGS = $(ONIE_CFLAGS)
-+LDFLAGS = $(ONIE_LDFLAGS)
++CFLAGS		= $(ONIE_CFLAGS)
++LDFLAGS		= $(ONIE_LDFLAGS)
 +
 +CFLAGS		+= -ggdb -O0 -I. -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar \
- 		  -Wall $(EFI_INCLUDES) \
+ 		  -Wall $(EFI_INCLUDES) -std=gnu89 \
  		  -ffreestanding -I$(shell $(CC) -print-file-name=include)
  
-@@ -12,7 +16,7 @@ endif
- ifeq ($(ARCH),ia32)
- 	CFLAGS	+= -mno-mmx -mno-sse -mno-red-zone -nostdinc -maccumulate-outgoing-args -m32
+@@ -17,7 +21,7 @@ endif
+ ifeq ($(ARCH),aarch64)
+ 	CFLAGS	+= -DMDE_CPU_AARCH64
  endif
 -LDFLAGS		= -nostdlib -znocombreloc
 +LDFLAGS		+= -nostdlib -znocombreloc
@@ -29,25 +36,25 @@ index 1769e67..186692d 100644
  TARGET		= libcryptlib.a
  OBJS		=   Hash/CryptMd4.o \
 diff --git a/Cryptlib/OpenSSL/Makefile b/Cryptlib/OpenSSL/Makefile
-index 7bedb94..45ffbd7 100644
+index 1b80e02..bb9547f 100644
 --- a/Cryptlib/OpenSSL/Makefile
 +++ b/Cryptlib/OpenSSL/Makefile
 @@ -1,7 +1,11 @@
  
- EFI_INCLUDES	= -I../Include -I$(EFI_INCLUDE) -I$(EFI_INCLUDE)/$(ARCH) -I$(EFI_INCLUDE)/protocol
+ EFI_INCLUDES	= -I../Include -I$(EFI_INCLUDE) -I$(EFI_INCLUDE)/$(ARCH) -I$(EFI_INCLUDE)/protocol -Icrypto/asn1 -Icrypto/evp -Icrypto/modes
  
 -CFLAGS		= -ggdb -O0 -I. -I.. -I../Include/ -Icrypto -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar -nostdinc \
 +# Seed compiler and linker flags ONIE build environment flags
-+CFLAGS = $(ONIE_CFLAGS)
-+LDFLAGS = $(ONIE_LDFLAGS)
++CFLAGS		= $(ONIE_CFLAGS)
++LDFLAGS		= $(ONIE_LDFLAGS)
 +
 +CFLAGS		+= -ggdb -O0 -I. -I.. -I../Include/ -Icrypto -fno-stack-protector -fno-strict-aliasing -fpic -fshort-wchar -nostdinc \
- 		  -ffreestanding -I$(shell $(CC) -print-file-name=include) \
- 		  -Wall $(EFI_INCLUDES) -DOPENSSL_SYSNAME_UWIN -DOPENSSL_SYS_UEFI -DL_ENDIAN -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DOPENSSL_NO_CAMELLIA -DOPENSSL_NO_SEED -DOPENSSL_NO_RC5 -DOPENSSL_NO_MDC2 -DOPENSSL_NO_SOCK -DOPENSSL_NO_CMS -DOPENSSL_NO_JPAKE -DOPENSSL_NO_CAPIENG -DOPENSSL_NO_ERR -DOPENSSL_NO_KRB5 -DOPENSSL_NO_DYNAMIC_ENGINE -DGETPID_IS_MEANINGLESS -DOPENSSL_NO_STDIO -DOPENSSL_NO_FP_API -DOPENSSL_NO_DGRAM -DOPENSSL_NO_SHA0 -DOPENSSL_NO_LHASH -DOPENSSL_NO_HW -DOPENSSL_NO_OCSP -DOPENSSL_NO_LOCKING -DOPENSSL_NO_DEPRECATED -DOPENSSL_SMALL_FOOTPRINT -DPEDANTIC
+ 		  -ffreestanding -std=gnu89 -I$(shell $(CC) -print-file-name=include) \
+ 		  -Wall $(EFI_INCLUDES) -DL_ENDIAN -D_CRT_SECURE_NO_DEPRECATE -D_CRT_NONSTDC_NO_DEPRECATE -DOPENSSL_SMALL_FOOTPRINT -DPEDANTIC
  
-@@ -19,7 +23,7 @@ endif
+@@ -20,7 +24,7 @@ endif
  ifeq ($(ARCH),arm)
- 	CFLAGS	+= -O2 -DTHIRTY_TWO_BIT
+ 	CFLAGS	+= -O2 -DMDE_CPU_ARM
  endif
 -LDFLAGS		= -nostdlib -znocombreloc
 +LDFLAGS		+= -nostdlib -znocombreloc
@@ -55,29 +62,29 @@ index 7bedb94..45ffbd7 100644
  TARGET		= libopenssl.a
  OBJS		=   crypto/cryptlib.o \
 diff --git a/Makefile b/Makefile
-index 46d0234..3c68597 100644
+index c02cc94..c6b0b66 100644
 --- a/Makefile
 +++ b/Makefile
-@@ -26,7 +26,12 @@ EFI_CRT_OBJS 	= $(EFI_PATH)/crt0-efi-$(ARCH).o
+@@ -23,7 +23,12 @@ EFI_CRT_OBJS 	= $(EFI_PATH)/crt0-efi-$(ARCH).o
  EFI_LDS		= elf_$(ARCH)_efi.lds
  
  DEFAULT_LOADER	:= \\\\grub.efi
 -CFLAGS		= -ggdb -O0 -fno-stack-protector -fno-strict-aliasing -fpic \
 +
 +# Seed compiler and linker flags ONIE build environment flags
-+CFLAGS = $(ONIE_CFLAGS)
-+LDFLAGS = $(ONIE_LDFLAGS)
++CFLAGS		= $(ONIE_CFLAGS)
++LDFLAGS		= $(ONIE_LDFLAGS)
 +
 +CFLAGS		+= -ggdb -O0 -fno-stack-protector -fno-strict-aliasing -fpic \
  		  -fshort-wchar -Wall -Wsign-compare -Werror -fno-builtin \
- 		  -Werror=sign-compare -ffreestanding \
+ 		  -Werror=sign-compare -ffreestanding -std=gnu89 \
  		  -I$(shell $(CC) -print-file-name=include) \
-@@ -63,7 +68,7 @@ ifneq ($(origin VENDOR_DBX_FILE), undefined)
+@@ -84,7 +89,7 @@ ifneq ($(origin VENDOR_DBX_FILE), undefined)
  	CFLAGS += -DVENDOR_DBX_FILE=\"$(VENDOR_DBX_FILE)\"
  endif
  
 -LDFLAGS		= --hash-style=sysv -nostdlib -znocombreloc -T $(EFI_LDS) -shared -Bsymbolic -L$(EFI_PATH) -L$(LIB_PATH) -LCryptlib -LCryptlib/OpenSSL $(EFI_CRT_OBJS) --build-id=sha1
 +LDFLAGS		+= --hash-style=sysv -nostdlib -znocombreloc -T $(EFI_LDS) -shared -Bsymbolic -L$(EFI_PATH) -L$(LIB_PATH) -LCryptlib -LCryptlib/OpenSSL $(EFI_CRT_OBJS) --build-id=sha1
  
- TARGET	= shim.efi MokManager.efi.signed fallback.efi.signed
- OBJS	= shim.o netboot.o cert.o replacements.o version.o
+ TARGET	= $(SHIMNAME).efi $(MMNAME).efi.signed $(FBNAME).efi.signed
+ OBJS	= shim.o netboot.o cert.o replacements.o tpm.o version.o
