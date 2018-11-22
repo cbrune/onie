@@ -1,0 +1,10 @@
+# dropbear config for riscv64 platforms
+
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+# The keys are dynamically generated every boot.
+get_keys_arch() {
+    false
+}

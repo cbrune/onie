@@ -1,0 +1,12 @@
+#!/bin/sh
+
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+# riscv64 systems boot time initializations
+
+init_arch()
+{
+    echo "init_arch() not implemented"
+}

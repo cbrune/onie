@@ -109,10 +109,10 @@ $(UTILLINUX_INSTALL_STAMP): $(SYSROOT_INIT_STAMP) $(UTILLINUX_BUILD_STAMP)
 	$(Q) rm -f $@ && eval $(PROFILE_STAMP)
 	$(Q) echo "==== Installing util-linux in $(SYSROOTDIR) ===="
 	$(Q) for file in $(UTILLINUX_LIBS) ; do \
-		cp -av $(DEV_SYSROOT)/lib/$$file $(SYSROOTDIR)/lib/ || exit 1 ; \
+		cp -av $(DEV_SYSROOT)/lib/$$file $(SYSROOTDIR)/usr/lib/ || exit 1 ; \
 	     done
 	$(Q) for file in $(UTILLINUX_USR_LIBS) ; do \
-		cp -av $(DEV_SYSROOT)/usr/lib/$$file $(SYSROOTDIR)/usr/lib/ || exit 1 ; \
+		ln -s $${file}.1 $(SYSROOTDIR)/usr/lib/$$file || exit 1 ; \
 	     done
 	$(Q) touch $@
 

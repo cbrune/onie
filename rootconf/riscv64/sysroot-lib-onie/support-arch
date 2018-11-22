@@ -1,0 +1,10 @@
+# riscv64 specific support routine
+
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+support_arch()
+{
+    echo "support_arch() not implemented"
+}

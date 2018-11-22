@@ -1,0 +1,17 @@
+# riscv64 specific uninstall routine
+
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+[ -r "$lib_dir/onie-uninstaller-common" ] || {
+    echo "ERROR: Unable to find onie-uninstaller-common"
+    exit 1
+}
+. $lib_dir/onie-uninstaller-common
+
+uninstall_system()
+{
+    echo "uninstall_system() not implemented"
+    return 0
+}

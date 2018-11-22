@@ -176,6 +176,9 @@ SYSROOT_LIBS	= ld-$(XTOOLS_LIBC_VERSION).so \
   ifeq ($(ARCH),arm64)
     SYSROOT_LIBS	+= ld-linux-aarch64.so.1
   endif
+  ifeq ($(ARCH),riscv64)
+    SYSROOT_LIBS 	+= ld-linux-riscv64-lp64d.so.1
+  endif
 endif
 
 ifeq ($(REQUIRE_CXX_LIBS),yes)
@@ -184,6 +187,8 @@ ifeq ($(REQUIRE_CXX_LIBS),yes)
     SYSROOT_LIBS += libstdc++.so.6.0.22
   else ifeq ($(GCC_VERSION),4.9.2)
     SYSROOT_LIBS += libstdc++.so.6.0.20
+  else ifeq ($(GCC_VERSION),8.2.0)
+    SYSROOT_LIBS += libstdc++.so.6.0.25
   else
     $(error C++ support: Unsupported GCC version: $(GCC_VERSION))
   endif
@@ -214,6 +219,15 @@ $(SYSROOT_CHECK_STAMP): $(PACKAGES_INSTALL_STAMPS)
 			    echo "ERROR: Missing SYSROOT_LIB: $$file" ; \
 			    exit 1; } ; \
 			find $(DEV_SYSROOT)/lib64 $(DEV_SYSROOT)/lib -name $$file | xargs -i cp -av {} $(SYSROOTDIR)/lib/ || exit 1 ; \
+		elif [ "$(ARCH)" == "riscv64" ] ; then \
+		    if [ -r "$(DEV_SYSROOT)/lib64/lp64d/$$file" ] ; then \
+			cp -av "$(DEV_SYSROOT)/lib64/lp64d/$$file" "$(SYSROOTDIR)/lib64/lp64d" || exit 1 ; \
+		    elif [ -r "$(DEV_SYSROOT)/lib/$$file" ] ; then \
+			cp -av "$(DEV_SYSROOT)/lib/$$file" "$(SYSROOTDIR)/lib" || exit 1 ; \
+		    else \
+			    echo "ERROR: Missing riscv64 SYSROOT_LIB: $$file" ; \
+			    exit 1; \
+		    fi \
 		else \
 		    [ -r "$(DEV_SYSROOT)/lib/$$file" ] || { \
 			    echo "ERROR: Missing SYSROOT_LIB: $$file" ; \

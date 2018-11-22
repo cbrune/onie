@@ -61,6 +61,11 @@ $(SYSROOT_INIT_STAMP): $(TREE_STAMP)
 		$(Q) cd $(SYSROOTDIR) && ln -s lib lib32 && ln -s lib lib64
 		$(Q) cd $(SYSROOTDIR)/usr && ln -s lib lib32 && ln -s lib lib64
         endif
+        ifeq ($(ARCH),$(filter $(ARCH),riscv64))
+		$(Q) mkdir -p -v $(SYSROOTDIR)/lib64/lp64d
+		$(Q) mkdir -p -v $(SYSROOTDIR)/usr/lib64
+		$(Q) ln -s ../../usr/lib $(SYSROOTDIR)/usr/lib64/lp64d
+        endif
 	$(Q) touch $@
 
 # Development sysroot, used for compiling and linking user space

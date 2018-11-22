@@ -1,0 +1,35 @@
+#!/bin/sh
+
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+# riscv64 boot boot mode implemenations see /etc/init.d/discover.sh
+
+# We want rescue mode booting to be a one time operation.  After the
+# rescue mode we should reboot into the previous state.
+rescue_revert_default_arch()
+{
+    echo "rescue_revert_default_arch() not implemented"
+    return 0
+}
+
+# Check whether we are running in NOS mode (after a successful NOS
+# install) or not.  If we are running in NOS mode, then make
+# architecture specific changes to turn the current install mode into
+# a one time operation.
+check_nos_mode_arch()
+{
+    echo "check_nos_mode_arch() not implemented"
+    # non-zero indicates NOS mode was not set
+    return 1
+}
+
+# We want install mode booting to be sticky, i.e. if you boot into
+# install mode you stay install mode until an installer runs
+# successfully.
+install_remain_sticky_arch()
+{
+    echo "install_remain_sticky_arch() not implemented"
+    return 0
+}

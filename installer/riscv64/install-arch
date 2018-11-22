@@ -1,0 +1,10 @@
+# RISCV64 specific ONIE installer functions
+
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+install_image()
+{
+    echo "Installer not implemented for riscv64..."
+}

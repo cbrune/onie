@@ -1,0 +1,26 @@
+#  Copyright (C) 2018 Curt Brune <curt@brune.net>
+#
+#  SPDX-License-Identifier:     GPL-2.0
+
+# riscv64 architecture implementation for manipulating the NOS mode.
+
+# Arch dependent NOS mode set interface.  Implemented in
+# nos-mode-arch.
+nos_mode_set_arch()
+{
+    echo "nos_mode_set_arch() not implemented"
+}
+
+# Arch dependent NOS mode get interface.  Implemented in
+# nos-mode-arch.
+nos_mode_get_arch()
+{
+    echo "nos_mode_get_arch() not implemented"
+}
+
+# Arch dependent NOS mode clear interface.  Implemented in
+# nos-mode-arch.
+nos_mode_clear_arch()
+{
+    echo "nos_mode_clear_arch() not implemented"
+}
