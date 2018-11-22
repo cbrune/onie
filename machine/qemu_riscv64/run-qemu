@@ -1,0 +1,22 @@
+#!/bin/sh -x
+
+export PATH="/opt/riscv/bin:$PATH"
+
+# set to onie/build/images directory
+IMAGE_DIR="$(realpath $(realpath $(dirname $0))/../../build/images)"
+BBL="${IMAGE_DIR}/qemu_riscv64-r0.bbl"
+INITRD="${IMAGE_DIR}/qemu_riscv64-r0.initrd"
+
+# create an 8GB qcow2 image:
+#  $ qemu-img create -f qcow2 onie-disk.qcow2 8G
+DISK="${IMAGE_DIR}/onie-disk.qcow2"
+
+sudo /opt/riscv/bin/qemu-system-riscv64 -nographic -machine virt \
+  -monitor stdio \
+  -serial telnet:localhost:9005,server \
+  -kernel $BBL -append "console=ttyS0 boot_reason=rescue" \
+  -initrd $INITRD \
+  -drive file=${DISK},id=hd0 \
+  -device virtio-blk-device,drive=hd0 \
+  -device virtio-net-device,netdev=onienet0 \
+  -netdev user,id=onienet0,hostfwd=:0.0.0.0:3040-:22,hostfwd=:0.0.0.0:3030-:3030
